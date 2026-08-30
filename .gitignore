@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.env
+*.log
+
+# OS / editor junk
+.DS_Store
+.vscode/
+
+# Local database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Runtime/temp files
+tmp/
+temp/

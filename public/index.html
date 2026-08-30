@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Freeze</title>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <main class="screen">
+
+    <header>
+      <h1>PROJECT FREEZE</h1>
+      <div id="temperature">-20°C</div>
+    </header>
+
+    <section class="status">
+      <div>
+        <span>Pump</span>
+        <strong id="pump-status">OFF</strong>
+      </div>
+
+      <div>
+        <span>System</span>
+        <strong>READY</strong>
+      </div>
+    </section>
+
+    <section class="actions">
+      <button id="add-food">Add Food</button>
+      <button id="remove-food">Remove Food</button>
+    </section>
+
+    <section>
+      <h2>Inventory</h2>
+
+      <div id="inventory">
+        <p>No food added yet.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

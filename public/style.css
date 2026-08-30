@@ -1,0 +1,67 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: white;
+}
+
+.screen {
+  padding: 24px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+h1 {
+  margin: 0;
+  font-size: 32px;
+}
+
+#temperature {
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.status {
+  display: flex;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.status div {
+  background: #222;
+  padding: 20px;
+  border-radius: 12px;
+  flex: 1;
+}
+
+.status span {
+  display: block;
+  font-size: 18px;
+}
+
+.status strong {
+  font-size: 28px;
+}
+
+.actions {
+  display: flex;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+button {
+  flex: 1;
+  min-height: 80px;
+  font-size: 28px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
