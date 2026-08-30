@@ -8,3 +8,18 @@ addFoodButton.addEventListener("click", () => {
 removeFoodButton.addEventListener("click", () => {
     console.log("Remove food pressed");
 })
+document.getElementById("shutdown").addEventListener("click", async () => {
+  if (!confirm("Shut down Project Freeze?")) return;
+
+  await fetch("/api/system/shutdown", {
+    method: "POST"
+  });
+});
+
+document.getElementById("reboot").addEventListener("click", async () => {
+  if (!confirm("Restart Project Freeze?")) return;
+
+  await fetch("/api/system/reboot", {
+    method: "POST"
+  });
+});
