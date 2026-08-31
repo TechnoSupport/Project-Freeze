@@ -2,10 +2,12 @@ const addFoodButton = document.getElementById("add-food");
 const removeFoodButton = document.getElementById("remove-food");
 
 addFoodButton.addEventListener("click", () => {
+    window.location.href = "addFood.html";
     console.log("Add food pressed");
 })
 
 removeFoodButton.addEventListener("click", () => {
+    window.location.href = "removeFood.html";
     console.log("Remove food pressed");
 })
 document.getElementById("shutdown").addEventListener("click", async () => {
