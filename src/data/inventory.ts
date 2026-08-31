@@ -10,6 +10,10 @@ export function getInventory(): FoodItem[] {
     return inventory;
 }
 
+export function getLastId(): number  {
+    return inventory.length;
+}
+
 export function addFood(item: FoodItem): void {
     inventory.push(item);
 }

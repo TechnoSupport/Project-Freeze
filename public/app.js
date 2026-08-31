@@ -1,9 +1,15 @@
 const addFoodButton = document.getElementById("add-food");
 const removeFoodButton = document.getElementById("remove-food");
+import {FoodItem, addFood, removeFood, getInventory, getLastId} from "../src/data/inventory";
+let FoodID = getLastId();
 
 addFoodButton.addEventListener("click", () => {
     window.location.href = "addFood.html";
     console.log("Add food pressed");
+    food = {
+      id: FoodID
+    }
+    addFood(food);
 })
 
 removeFoodButton.addEventListener("click", () => {
