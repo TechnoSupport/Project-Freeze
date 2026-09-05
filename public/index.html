@@ -1,49 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no"
+  />
+
   <title>Project Freeze</title>
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
-  <main class="screen">
+  <main class="dashboard">
 
-    <header>
-      <h1>PROJECT FREEZE</h1>
-      <div id="temperature">-20°C</div>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">NASA HUNCH</p>
+        <h1>PROJECT FREEZE</h1>
+      </div>
+
+      <div class="system-state">
+        <span class="status-dot"></span>
+        <span id="system-status">SYSTEM READY</span>
+      </div>
     </header>
 
-    <section class="status">
-      <div>
-        <span>Pump</span>
-        <strong id="pump-status">OFF</strong>
+    <section class="hero-grid">
+
+      <div class="temperature-panel">
+        <p class="panel-label">FREEZER TEMPERATURE</p>
+
+        <div class="temperature-display">
+          <span id="temperature-value">--.-</span>
+          <span class="temperature-unit">°C</span>
+        </div>
+
+        <div class="temperature-footer">
+          <span>Target</span>
+          <strong id="target-temperature">-20°C</strong>
+        </div>
       </div>
 
-      <div>
-        <span>System</span>
-        <strong>READY</strong>
+      <div class="pump-panel">
+        <div class="panel-header">
+          <p class="panel-label">PUMP OUTPUT</p>
+
+          <span id="pump-state" class="state-badge off">
+            OFF
+          </span>
+        </div>
+
+        <div class="pump-value">
+          <span id="pump-power">0</span>
+          <span>%</span>
+        </div>
+
+        <div class="power-bar">
+          <div
+            id="pump-power-bar"
+            class="power-bar-fill"
+          ></div>
+        </div>
+
+        <p class="pump-description" id="pump-description">
+          Pump stopped
+        </p>
       </div>
+
     </section>
 
-    <section class="actions">
-      <button id="add-food">Add Food</button>
-      <button id="remove-food">Remove Food</button>
-      <button id="shutdown">Shut Down</button>
-      <button id="reboot">Restart</button>
-    </section>
+    <section class="inventory-section">
 
-    <section>
-      <h2>Inventory</h2>
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">STORAGE</p>
+          <h2>Inventory</h2>
+        </div>
 
-      <div id="inventory">
-        <p>No food added yet.</p>
+        <span class="inventory-count">
+          <span id="inventory-count">0</span> Items
+        </span>
       </div>
+
+      <div id="inventory" class="inventory-list">
+
+        <div class="empty-state">
+          <p>No food has been added yet.</p>
+          <span>Add an item to begin tracking freezer contents.</span>
+        </div>
+
+      </div>
+
+      <div class="inventory-actions">
+        <button id="add-food" class="primary-button">
+          <span class="button-icon">+</span>
+          Add Food
+        </button>
+
+        <button id="remove-food" class="secondary-button">
+          <span class="button-icon">−</span>
+          Remove Food
+        </button>
+      </div>
+
     </section>
+
+    <footer class="footer">
+
+      <div class="connection-status">
+        <span class="status-dot"></span>
+        Raspberry Pi Connected
+      </div>
+
+      <button id="settings-button" class="settings-button">
+        System
+      </button>
+
+    </footer>
 
   </main>
+
+  <div id="system-modal" class="modal hidden">
+
+    <div class="modal-card">
+
+      <div class="modal-header">
+        <div>
+          <p class="eyebrow">SYSTEM</p>
+          <h2>System Controls</h2>
+        </div>
+
+        <button
+          id="close-system-modal"
+          class="close-button"
+          aria-label="Close system controls"
+        >
+          ×
+        </button>
+      </div>
+
+      <p class="modal-description">
+        Restart or safely shut down the Project Freeze computer.
+      </p>
+
+      <div class="system-actions">
+
+        <button id="reboot" class="system-button">
+          Restart Raspberry Pi
+        </button>
+
+        <button id="shutdown" class="danger-button">
+          Shut Down Raspberry Pi
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
 
   <script src="app.js"></script>
 </body>

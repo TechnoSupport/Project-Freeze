@@ -1,5 +1,12 @@
 import express from "express";
 import path from "path";
+import {
+    startPump,
+    stopPump,
+    setPumpPower,
+    getPumpStatus,
+    getPumpPower
+} from "./hardware/pump";
 
 const app = express();
 const PORT = 3000;
@@ -9,11 +16,6 @@ app.listen(PORT, () => {
   console.log(`Project Freeze UI running at http://localhost:${PORT}`)
 })
 
-import {
-  startPump,
-  stopPump,
-  getPumpStatus
-} from "./hardware/pump";
 
 import {
   readTemperature
@@ -47,7 +49,6 @@ async function main() {
   const temperature = await readTemperature();
 
   console.log(`Temperature: ${temperature}°C`);
-  console.log(`Pump running: ${getPumpStatus()}`);
 
   addFood({
     id: 1,

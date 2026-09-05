@@ -2,66 +2,594 @@
   box-sizing: border-box;
 }
 
+:root {
+  --background: #090d13;
+  --surface: #111823;
+  --surface-light: #172231;
+  --border: #253247;
+
+  --text: #f5f8fc;
+  --muted: #8190a5;
+
+  --accent: #50a9ff;
+  --accent-soft: rgba(80, 169, 255, 0.12);
+
+  --green: #56d890;
+  --green-soft: rgba(86, 216, 144, 0.12);
+
+  --red: #ff6464;
+  --red-soft: rgba(255, 100, 100, 0.12);
+
+  --radius: 20px;
+}
+
+html,
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #111;
-  color: white;
+  min-height: 100%;
 }
 
-.screen {
-  padding: 24px;
-}
+body {
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
 
-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+  background: var(--background);
+  color: var(--text);
 
-h1 {
-  margin: 0;
-  font-size: 32px;
-}
-
-#temperature {
-  font-size: 40px;
-  font-weight: bold;
-}
-
-.status {
-  display: flex;
-  gap: 20px;
-  margin-top: 30px;
-}
-
-.status div {
-  background: #222;
-  padding: 20px;
-  border-radius: 12px;
-  flex: 1;
-}
-
-.status span {
-  display: block;
-  font-size: 18px;
-}
-
-.status strong {
-  font-size: 28px;
-}
-
-.actions {
-  display: flex;
-  gap: 20px;
-  margin-top: 30px;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
 }
 
 button {
+  font: inherit;
+}
+
+.dashboard {
+  min-height: 100vh;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  padding:
+    clamp(20px, 3vw, 42px)
+    clamp(20px, 4vw, 56px);
+
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* HEADER */
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.eyebrow {
+  margin: 0 0 6px 0;
+
+  color: var(--muted);
+
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 0;
+
+  font-size: clamp(27px, 3vw, 42px);
+  letter-spacing: 0.03em;
+}
+
+h2 {
+  margin-bottom: 0;
+  font-size: 27px;
+}
+
+.system-state,
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  color: var(--muted);
+
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.status-dot {
+  width: 9px;
+  height: 9px;
+
+  flex-shrink: 0;
+
+  border-radius: 50%;
+  background: var(--green);
+
+  box-shadow: 0 0 12px rgba(86, 216, 144, 0.6);
+}
+
+/* MAIN STATUS PANELS */
+
+.hero-grid {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.4fr)
+    minmax(280px, 0.8fr);
+
+  gap: 22px;
+}
+
+.temperature-panel,
+.pump-panel {
+  min-width: 0;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+
+  background: var(--surface);
+
+  padding: clamp(24px, 4vw, 42px);
+}
+
+.panel-label {
+  margin-bottom: 18px;
+
+  color: var(--muted);
+
+  font-size: 13px;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+}
+
+.temperature-display {
+  display: flex;
+  align-items: flex-start;
+
+  font-variant-numeric: tabular-nums;
+}
+
+#temperature-value {
+  line-height: 0.95;
+
+  font-size: clamp(82px, 12vw, 150px);
+  font-weight: 700;
+  letter-spacing: -0.065em;
+}
+
+.temperature-unit {
+  margin-top: 8px;
+  margin-left: 10px;
+
+  color: var(--muted);
+
+  font-size: clamp(27px, 4vw, 44px);
+  font-weight: 500;
+}
+
+.temperature-footer {
+  margin-top: 28px;
+  padding-top: 20px;
+
+  border-top: 1px solid var(--border);
+
+  display: flex;
+  justify-content: space-between;
+
+  color: var(--muted);
+}
+
+.temperature-footer strong {
+  color: var(--text);
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.state-badge {
+  padding: 7px 11px;
+
+  border-radius: 999px;
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.state-badge.off {
+  color: var(--muted);
+  background: rgba(129, 144, 165, 0.12);
+}
+
+.state-badge.on {
+  color: var(--green);
+  background: var(--green-soft);
+}
+
+.pump-value {
+  margin-top: 24px;
+
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+
+  font-size: clamp(62px, 8vw, 100px);
+  font-weight: 700;
+
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.pump-value span:last-child {
+  color: var(--muted);
+  font-size: 30px;
+  font-weight: 500;
+}
+
+.power-bar {
+  height: 9px;
+
+  margin-top: 30px;
+
+  overflow: hidden;
+
+  border-radius: 100px;
+
+  background: var(--surface-light);
+}
+
+.power-bar-fill {
+  width: 0%;
+  height: 100%;
+
+  border-radius: inherit;
+
+  background: var(--accent);
+
+  transition: width 350ms ease;
+}
+
+.pump-description {
+  margin: 14px 0 0;
+
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* INVENTORY */
+
+.inventory-section {
   flex: 1;
-  min-height: 80px;
-  font-size: 28px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+
+  background: var(--surface);
+
+  padding: clamp(22px, 3vw, 34px);
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-bottom: 20px;
+}
+
+.inventory-count {
+  padding: 8px 13px;
+
+  border-radius: 999px;
+
+  background: var(--surface-light);
+  color: var(--muted);
+
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.inventory-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inventory-item {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto;
+
+  gap: 16px;
+
+  align-items: center;
+
+  min-height: 68px;
+
+  padding: 14px 18px;
+
+  border: 1px solid var(--border);
+  border-radius: 13px;
+
+  background: var(--surface-light);
+}
+
+.inventory-name {
+  overflow: hidden;
+
+  color: var(--text);
+
+  font-size: 17px;
+  font-weight: 650;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.inventory-quantity {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.empty-state {
+  min-height: 110px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+
+  border: 1px dashed var(--border);
+  border-radius: 14px;
+
+  text-align: center;
+}
+
+.empty-state p {
+  margin-bottom: 5px;
+
+  color: var(--text);
+
+  font-size: 17px;
+  font-weight: 650;
+}
+
+.empty-state span {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.inventory-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 14px;
+
+  margin-top: 22px;
+}
+
+.primary-button,
+.secondary-button,
+.system-button,
+.danger-button,
+.settings-button,
+.close-button {
   border: none;
-  border-radius: 12px;
+
   cursor: pointer;
+
+  touch-action: manipulation;
+}
+
+.primary-button,
+.secondary-button {
+  min-height: 62px;
+
+  border-radius: 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.primary-button {
+  background: var(--accent);
+  color: #06111e;
+}
+
+.secondary-button {
+  border: 1px solid var(--border);
+
+  background: var(--surface-light);
+  color: var(--text);
+}
+
+.button-icon {
+  font-size: 25px;
+  line-height: 1;
+}
+
+/* FOOTER */
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  min-height: 52px;
+}
+
+.settings-button {
+  min-width: 110px;
+  min-height: 46px;
+
+  border: 1px solid var(--border);
+  border-radius: 12px;
+
+  background: var(--surface);
+  color: var(--text);
+
+  font-weight: 650;
+}
+
+/* MODAL */
+
+.modal {
+  position: fixed;
+  inset: 0;
+
+  z-index: 100;
+
+  display: grid;
+  place-items: center;
+
+  padding: 22px;
+
+  background: rgba(0, 0, 0, 0.66);
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-card {
+  width: min(520px, 100%);
+
+  padding: 28px;
+
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+
+  background: var(--surface);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  gap: 20px;
+}
+
+.close-button {
+  width: 44px;
+  height: 44px;
+
+  flex-shrink: 0;
+
+  border-radius: 12px;
+
+  background: var(--surface-light);
+  color: var(--muted);
+
+  font-size: 27px;
+}
+
+.modal-description {
+  margin: 22px 0;
+
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.system-actions {
+  display: grid;
+  gap: 12px;
+}
+
+.system-button,
+.danger-button {
+  min-height: 56px;
+
+  border-radius: 13px;
+
+  font-weight: 700;
+}
+
+.system-button {
+  background: var(--surface-light);
+  color: var(--text);
+}
+
+.danger-button {
+  background: var(--red-soft);
+  color: var(--red);
+
+  border: 1px solid rgba(255, 100, 100, 0.25);
+}
+
+/* TOUCH STATES */
+
+button:active {
+  transform: scale(0.98);
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 760px) {
+  .dashboard {
+    padding: 18px;
+    gap: 18px;
+  }
+
+  .topbar {
+    align-items: flex-start;
+  }
+
+  .system-state {
+    font-size: 11px;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .temperature-panel,
+  .pump-panel {
+    padding: 24px;
+  }
+
+  .inventory-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .footer {
+    gap: 16px;
+  }
+}
+
+@media (max-width: 450px) {
+  .topbar {
+    flex-direction: column;
+  }
+
+  #temperature-value {
+    font-size: 76px;
+  }
 }
