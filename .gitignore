@@ -1,6 +1,8 @@
 node_modules/
 dist/
 .env
+config/project-freeze.env
+data/inventory.json
 *.log
 
 # OS / editor junk

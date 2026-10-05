@@ -1,381 +1,122 @@
-const addFoodButton =
-  document.getElementById("add-food");
-
-const removeFoodButton =
-  document.getElementById("remove-food");
-
-const shutdownButton =
-  document.getElementById("shutdown");
-
-const rebootButton =
-  document.getElementById("reboot");
-
-const settingsButton =
-  document.getElementById("settings-button");
-
-const closeSystemModalButton =
-  document.getElementById("close-system-modal");
-
-const systemModal =
-  document.getElementById("system-modal");
-
-const temperatureElement =
-  document.getElementById("temperature-value");
-
-const pumpPowerElement =
-  document.getElementById("pump-power");
-
-const pumpStateElement =
-  document.getElementById("pump-state");
-
-const pumpDescriptionElement =
-  document.getElementById("pump-description");
-
-const pumpPowerBar =
-  document.getElementById("pump-power-bar");
-
-const inventoryElement =
-  document.getElementById("inventory");
-
-const inventoryCountElement =
-  document.getElementById("inventory-count");
-
-
-/* -------------------------
-   NAVIGATION
-------------------------- */
-
-addFoodButton.addEventListener("click", () => {
-  window.location.href = "addFood.html";
-});
-
-removeFoodButton.addEventListener("click", () => {
-  window.location.href = "removeFood.html";
-});
-
-
-/* -------------------------
-   SYSTEM MENU
-------------------------- */
-
-settingsButton.addEventListener("click", () => {
-  systemModal.classList.remove("hidden");
-});
-
-closeSystemModalButton.addEventListener("click", () => {
-  systemModal.classList.add("hidden");
-});
-
-systemModal.addEventListener("click", (event) => {
-  if (event.target === systemModal) {
-    systemModal.classList.add("hidden");
-  }
-});
-
-
-/* -------------------------
-   PI SYSTEM COMMANDS
-------------------------- */
-
-shutdownButton.addEventListener("click", async () => {
-
-  const confirmed = confirm(
-    "Shut down Project Freeze?"
-  );
-
-  if (!confirmed) {
-    return;
-  }
-
-  try {
-
-    await fetch("/api/system/shutdown", {
-      method: "POST"
-    });
-
-    shutdownButton.textContent =
-      "Shutting Down...";
-
-  } catch (error) {
-
-    console.error(
-      "Failed to shut down Raspberry Pi:",
-      error
-    );
-
-  }
-
-});
-
-
-rebootButton.addEventListener("click", async () => {
-
-  const confirmed = confirm(
-    "Restart Project Freeze?"
-  );
-
-  if (!confirmed) {
-    return;
-  }
-
-  try {
-
-    await fetch("/api/system/reboot", {
-      method: "POST"
-    });
-
-    rebootButton.textContent =
-      "Restarting...";
-
-  } catch (error) {
-
-    console.error(
-      "Failed to restart Raspberry Pi:",
-      error
-    );
-
-  }
-
-});
-
-
-/* -------------------------
-   UI UPDATE FUNCTIONS
-------------------------- */
-
-function updateTemperature(temperature) {
-
-  const numericTemperature =
-    Number(temperature);
-
-  if (!Number.isFinite(numericTemperature)) {
-    temperatureElement.textContent = "--.-";
-    return;
-  }
-
-  temperatureElement.textContent =
-    numericTemperature.toFixed(1);
-
+function byId(id) {
+  return document.getElementById(id);
 }
 
-
-function updatePump(power) {
-
-  let numericPower =
-    Number(power);
-
-  if (!Number.isFinite(numericPower)) {
-    numericPower = 0;
+async function request(url, options) {
+  const response = await fetch(url, options);
+  if (!response.ok) {
+    const result = await response.json().catch(() => ({}));
+    throw new Error(result.error || `Request failed (${response.status})`);
   }
-
-  numericPower =
-    Math.max(
-      0,
-      Math.min(100, numericPower)
-    );
-
-  pumpPowerElement.textContent =
-    Math.round(numericPower);
-
-  pumpPowerBar.style.width =
-    `${numericPower}%`;
-
-  if (numericPower > 0) {
-
-    pumpStateElement.textContent =
-      "RUNNING";
-
-    pumpStateElement.classList.remove(
-      "off"
-    );
-
-    pumpStateElement.classList.add(
-      "on"
-    );
-
-    pumpDescriptionElement.textContent =
-      `PWM output at ${Math.round(numericPower)}%`;
-
-  } else {
-
-    pumpStateElement.textContent =
-      "OFF";
-
-    pumpStateElement.classList.remove(
-      "on"
-    );
-
-    pumpStateElement.classList.add(
-      "off"
-    );
-
-    pumpDescriptionElement.textContent =
-      "Pump stopped";
-
-  }
-
+  return response.status === 204 ? null : response.json();
 }
 
+function updateTemperature(value) {
+  const element = byId("temperature-value");
+  if (!element) return;
+  const temperature = Number(value);
+  element.textContent = Number.isFinite(temperature) ? temperature.toFixed(1) : "--.-";
+}
 
-function updateInventory(items) {
+function updatePump(value) {
+  const power = Number.isFinite(Number(value)) ? Math.max(0, Math.min(100, Number(value))) : 0;
+  if (byId("pump-power")) byId("pump-power").textContent = Math.round(power);
+  if (byId("pump-power-bar")) byId("pump-power-bar").style.width = `${power}%`;
+  if (!byId("pump-state")) return;
 
-  if (!Array.isArray(items)) {
-    return;
-  }
+  byId("pump-state").textContent = power > 0 ? "RUNNING" : "OFF";
+  byId("pump-state").classList.toggle("on", power > 0);
+  byId("pump-state").classList.toggle("off", power === 0);
+  byId("pump-description").textContent = power > 0 ? `PWM output at ${Math.round(power)}%` : "Pump stopped";
+}
 
-  inventoryElement.innerHTML = "";
+function renderInventory(items, removable = false) {
+  const container = byId("inventory");
+  if (!container || !Array.isArray(items)) return;
+  if (byId("inventory-count")) byId("inventory-count").textContent = items.length;
+  container.replaceChildren();
 
-  inventoryCountElement.textContent =
-    items.length;
-
-  if (items.length === 0) {
-
-    inventoryElement.innerHTML = `
-      <div class="empty-state">
-
-        <p>No food has been added yet.</p>
-
-        <span>
-          Add an item to begin tracking freezer contents.
-        </span>
-
-      </div>
-    `;
-
+  if (!items.length) {
+    container.innerHTML = '<div class="empty-state"><p>No food has been added yet.</p><span>Add an item to begin tracking freezer contents.</span></div>';
     return;
   }
 
   for (const item of items) {
+    const row = document.createElement("div");
+    row.className = "inventory-item";
+    const details = document.createElement("div");
+    details.innerHTML = '<div class="inventory-name"></div><div class="inventory-quantity"></div>';
+    details.querySelector(".inventory-name").textContent = item.name || "Unnamed Item";
+    details.querySelector(".inventory-quantity").textContent = `Quantity: ${item.quantity}`;
+    row.appendChild(details);
 
-    const row =
-      document.createElement("div");
-
-    row.className =
-      "inventory-item";
-
-
-    const name =
-      document.createElement("div");
-
-    name.className =
-      "inventory-name";
-
-    name.textContent =
-      item.name || "Unnamed Item";
-
-
-    const quantity =
-      document.createElement("div");
-
-    quantity.className =
-      "inventory-quantity";
-
-    quantity.textContent =
-      `Quantity: ${item.quantity ?? 1}`;
-
-
-    row.appendChild(name);
-    row.appendChild(quantity);
-
-    inventoryElement.appendChild(row);
-
+    if (removable) {
+      const button = document.createElement("button");
+      button.className = "danger-button compact-button";
+      button.textContent = "Remove";
+      button.addEventListener("click", async () => {
+        await request(`/api/inventory/${item.id}`, { method: "DELETE" });
+        await loadInventory(true);
+      });
+      row.appendChild(button);
+    }
+    container.appendChild(row);
   }
-
 }
 
-
-/* -------------------------
-   TEMPORARY PROTOTYPE DATA
--------------------------
-
-These values allow the new UI to work
-before we create the live status API.
-
-Delete this section once
-/api/status is implemented.
-*/
-
-updateTemperature(-20);
-
-updatePump(0);
-
-
-/* -------------------------
-   LIVE STATUS
--------------------------
-
-Once the backend endpoint exists,
-this function will automatically
-populate the dashboard.
-
-Expected JSON:
-
-{
-  "temperature": -18.4,
-  "pumpPower": 42,
-  "inventory": [...]
+async function loadInventory(removable = false) {
+  const data = await request("/api/inventory");
+  renderInventory(data.inventory, removable);
 }
-*/
 
 async function refreshStatus() {
-
   try {
-
-    const response =
-      await fetch("/api/status");
-
-    if (!response.ok) {
-      return;
-    }
-
-    const data =
-      await response.json();
-
-
-    if (
-      data.temperature !== undefined
-    ) {
-      updateTemperature(
-        data.temperature
-      );
-    }
-
-
-    if (
-      data.pumpPower !== undefined
-    ) {
-      updatePump(
-        data.pumpPower
-      );
-    }
-
-
-    if (
-      Array.isArray(data.inventory)
-    ) {
-      updateInventory(
-        data.inventory
-      );
-    }
-
-  } catch (error) {
-
-    /*
-      During early development this
-      endpoint does not exist yet,
-      so don't spam the console.
-    */
-
+    const data = await request("/api/status");
+    updateTemperature(data.temperature);
+    updatePump(data.pumpPower);
+    renderInventory(data.inventory);
+    const healthy = data.hardware.temperature === "ok" && data.hardware.pump === "ok";
+    if (byId("system-status")) byId("system-status").textContent = healthy ? "SYSTEM READY" : "CHECK HARDWARE";
+  } catch (_error) {
+    if (byId("system-status")) byId("system-status").textContent = "CONNECTION LOST";
   }
-
 }
 
+byId("add-food")?.addEventListener("click", () => { window.location.href = "addFood.html"; });
+byId("remove-food")?.addEventListener("click", () => { window.location.href = "removeFood.html"; });
+byId("Back")?.addEventListener("click", () => { window.location.href = "/"; });
 
-/* Refresh freezer data once per second */
+byId("settings-button")?.addEventListener("click", () => byId("system-modal").classList.remove("hidden"));
+byId("close-system-modal")?.addEventListener("click", () => byId("system-modal").classList.add("hidden"));
+byId("system-modal")?.addEventListener("click", event => {
+  if (event.target === byId("system-modal")) byId("system-modal").classList.add("hidden");
+});
 
-refreshStatus();
+async function powerAction(action, message) {
+  if (!confirm(message)) return;
+  await request(`/api/system/${action}`, { method: "POST" });
+}
+byId("shutdown")?.addEventListener("click", () => powerAction("shutdown", "Shut down Project Freeze?"));
+byId("reboot")?.addEventListener("click", () => powerAction("reboot", "Restart Project Freeze?"));
 
-setInterval(
-  refreshStatus,
-  1000
-);
+byId("add-food-form")?.addEventListener("submit", async event => {
+  event.preventDefault();
+  const message = byId("form-message");
+  try {
+    await request("/api/inventory", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: byId("food-name").value, quantity: Number(byId("food-quantity").value) })
+    });
+    window.location.href = "/";
+  } catch (error) {
+    message.textContent = error.message;
+  }
+});
+
+if (byId("temperature-value")) {
+  refreshStatus();
+  setInterval(refreshStatus, 10000);
+} else if (byId("remove-page")) {
+  loadInventory(true).catch(error => { byId("form-message").textContent = error.message; });
+}

@@ -1,7 +1,7 @@
-import { exec } from "child_process";
+import { execFile } from "child_process";
 
 export function shutdownPi(): void {
-  exec("sudo shutdown -h now", (error) => {
+  execFile("sudo", ["-n", "/usr/bin/systemctl", "poweroff"], (error) => {
     if (error) {
       console.error("Shutdown failed:", error);
     }
@@ -9,7 +9,7 @@ export function shutdownPi(): void {
 }
 
 export function rebootPi(): void {
-  exec("sudo reboot", (error) => {
+  execFile("sudo", ["-n", "/usr/bin/systemctl", "reboot"], (error) => {
     if (error) {
       console.error("Reboot failed:", error);
     }

@@ -1,14 +1,16 @@
 import sys
 import json
+import os
 import board
 import busio
 from adafruit_pca9685 import PCA9685
 
-PUMP_CHANNEL = 0
+PUMP_CHANNEL = int(os.environ.get("PUMP_CHANNEL", "0"))
+PUMP_FREQUENCY = int(os.environ.get("PUMP_FREQUENCY", "500"))
 
 i2c = busio.I2C(board.SCL, board.SDA)
 pca = PCA9685(i2c)
-pca.frequency = 500
+pca.frequency = PUMP_FREQUENCY
 
 pump = pca.channels[PUMP_CHANNEL]
 

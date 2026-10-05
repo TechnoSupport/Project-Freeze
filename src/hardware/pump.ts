@@ -1,57 +1,37 @@
 import { execFile } from "child_process";
+import path from "path";
 
-export function setPumpSpeed(percent: number): Promise<number> {
+const python = process.env.PYTHON_BIN || "python3";
+const pumpScript = path.resolve(process.cwd(), "src/hardware/pump.py");
+
+function runPump(command: "set" | "get", value?: number): Promise<number> {
   return new Promise((resolve, reject) => {
-    const safePercent = Math.max(0, Math.min(100, percent));
+    const args = [pumpScript, command];
+    if (value !== undefined) args.push(value.toString());
 
-    execFile(
-      "python3",
-      ["./src/hardware/pump.py", "set", safePercent.toString()],
-      (error, stdout, stderr) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-
-        if (stderr) {
-          console.error("Pump stderr:", stderr);
-        }
-
-        try {
-          const data = JSON.parse(stdout);
-          resolve(data.speed);
-        } catch (error) {
-          reject(error);
-        }
+    execFile(python, args, { timeout: 10000 }, (error, stdout, stderr) => {
+      if (error) {
+        reject(new Error(stderr.trim() || error.message));
+        return;
       }
-    );
+
+      try {
+        const data = JSON.parse(stdout);
+        if (typeof data.speed !== "number") throw new Error("Invalid pump response");
+        resolve(data.speed);
+      } catch (parseError) {
+        reject(parseError);
+      }
+    });
   });
 }
 
+export function setPumpSpeed(percent: number): Promise<number> {
+  return runPump("set", Math.max(0, Math.min(100, percent)));
+}
+
 export function getPumpSpeed(): Promise<number> {
-  return new Promise((resolve, reject) => {
-    execFile(
-      "python3",
-      ["pump.py", "get"],
-      (error, stdout, stderr) => {
-        if (error) {
-          reject(error);
-          return;
-        }
-
-        if (stderr) {
-          console.error("Pump stderr:", stderr);
-        }
-
-        try {
-          const data = JSON.parse(stdout);
-          resolve(data.speed);
-        } catch (error) {
-          reject(error);
-        }
-      }
-    );
-  });
+  return runPump("get");
 }
 
 export async function stopPump(): Promise<void> {

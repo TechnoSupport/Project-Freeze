@@ -593,3 +593,9 @@ button:active {
     font-size: 76px;
   }
 }
+/* Forms used by the inventory screens */
+.food-form { display: grid; gap: 0.75rem; max-width: 38rem; margin-top: 2rem; }
+.food-form label { font-weight: 700; }
+.food-form input { font: inherit; padding: 0.9rem; border: 1px solid #667085; border-radius: 0.5rem; }
+.form-message { min-height: 1.5rem; color: #ff6b6b; }
+.compact-button { width: auto; padding: 0.6rem 1rem; }

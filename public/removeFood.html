@@ -2,34 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Freeze</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Remove Food · Project Freeze</title>
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  <main class="screen">
-
-    <header>
-      <h1>Remove Food:</h1>
-    </header>
-
-    <section class="actions">
-      <button id="Back">Home</button>
-      <button id="Undo">Back</button>
-    </section>
-
-    <section>
-      <h2>Inventory</h2>
-
-      <div id="inventory">
-        <p>No food added yet.</p>
-      </div>
-    </section>
-
+  <main id="remove-page" class="screen">
+    <header><p class="eyebrow">STORAGE</p><h1>Remove Food</h1></header>
+    <p id="form-message" class="form-message" role="alert"></p>
+    <div id="inventory" class="inventory-list"></div>
+    <div class="inventory-actions">
+      <button id="Back" type="button" class="secondary-button">Back Home</button>
+    </div>
   </main>
-
   <script src="app.js"></script>
 </body>
 </html>

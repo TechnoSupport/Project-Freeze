@@ -2,34 +2,25 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Freeze</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Add Food · Project Freeze</title>
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
   <main class="screen">
-
-    <header>
-      <h1>Add Food:</h1>
-    </header>
-
-    <section class="actions">
-      <button id="Back">Home</button>
-      <button id="Undo">Undo</button>
-    </section>
-
-    <section>
-      <h2>Inventory</h2>
-
-      <div id="inventory">
-        <p>No food added yet.</p>
+    <header><p class="eyebrow">STORAGE</p><h1>Add Food</h1></header>
+    <form id="add-food-form" class="food-form">
+      <label for="food-name">Food name</label>
+      <input id="food-name" name="name" maxlength="80" required autofocus>
+      <label for="food-quantity">Quantity</label>
+      <input id="food-quantity" name="quantity" type="number" min="1" step="1" value="1" required>
+      <p id="form-message" class="form-message" role="alert"></p>
+      <div class="inventory-actions">
+        <button type="submit" class="primary-button">Save Food</button>
+        <button id="Back" type="button" class="secondary-button">Cancel</button>
       </div>
-    </section>
-
+    </form>
   </main>
-
   <script src="app.js"></script>
 </body>
 </html>
